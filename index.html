@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>講義ノートAI - 音声文字起こし＆要約</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+  <!-- ヘッダー -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <span>🎙️</span> 講義ノートAI
+      </h1>
+      <!-- APIキー設定ボタン -->
+      <button id="apiKeyBtn" class="text-xs px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 transition">
+        <span id="apiKeyStatusIcon" class="w-2 h-2 rounded-full bg-slate-400"></span>
+        <span id="apiKeyStatusText">APIキー未設定</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 pt-6 space-y-6">
+
+    <!-- APIキー入力モーダル（初期は非表示） -->
+    <div id="apiModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+        <h2 class="text-base font-bold text-slate-900">Gemini APIキーの設定</h2>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          Google AI Studioで取得したAPIキーを入力してください。キーはブラウザ（localStorage）に保存され、外部サーバーには送信されません。
+        </p>
+        <div>
+          <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button id="closeModalBtn" class="text-xs px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">キャンセル</button>
+          <button id="saveKeyBtn" class="text-xs px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700">保存する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 講義情報入力 -->
+    <section class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+      <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider">講義名（任意）</label>
+      <input type="text" id="lectureTitle" placeholder="例: 経済学入門 第5回" class="w-full text-sm px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    </section>
+
+    <!-- 音声入力セクション -->
+    <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+      <h2 class="text-sm font-bold text-slate-900">音声データの読み込み</h2>
+      
+      <!-- ファイル選択 -->
+      <div>
+        <label class="block text-xs text-slate-500 mb-1">音声ファイルを選択（MP3, M4A, WAV, WEBM等）</label>
+        <input type="file" id="audioFileInput" accept="audio/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer border border-slate-200 rounded-lg">
+      </div>
+
+      <!-- 音声プレイヤー（ファイル選択後に表示） -->
+      <div id="audioPreviewContainer" class="hidden pt-2 border-t border-slate-100">
+        <p class="text-xs text-slate-500 mb-2">選択した音声のプレビュー:</p>
+        <audio id="audioPlayer" controls class="w-full h-10 rounded-lg"></audio>
+      </div>
+    </section>
+
+    <!-- 実行ボタン -->
+    <button id="runBtn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2">
+      <span>✨ 文字起こし＆要約を実行</span>
+    </button>
+
+    <!-- 結果表示プレースホルダー（Step 3で拡張） -->
+    <section class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+      <h2 class="text-sm font-bold text-slate-900 mb-2">解析結果</h2>
+      <div id="resultOutput" class="text-xs text-slate-400 italic bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200">
+        音声ファイルを選択して「実行」を押すと、ここに要約と文字起こしが表示されます。
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript (Step 1: UI操作 & APIキー管理 & 音声プレビュー) -->
+  <script>
+    // --- DOM要素 ---
+    const apiKeyBtn = document.getElementById('apiKeyBtn');
+    const apiKeyStatusIcon = document.getElementById('apiKeyStatusIcon');
+    const apiKeyStatusText = document.getElementById('apiKeyStatusText');
+    const apiModal = document.getElementById('apiModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const saveKeyBtn = document.getElementById('saveKeyBtn');
+    const audioFileInput = document.getElementById('audioFileInput');
+    const audioPreviewContainer = document.getElementById('audioPreviewContainer');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const runBtn = document.getElementById('runBtn');
+
+    // --- APIキー管理 ---
+    function updateKeyStatus() {
+      const key = localStorage.getItem('gemini_api_key');
+      if (key && key.trim() !== '') {
+        apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        apiKeyStatusText.textContent = 'APIキー設定済み';
+        apiKeyStatusText.className = 'text-emerald-700 font-medium';
+      } else {
+        apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-rose-500';
+        apiKeyStatusText.textContent = 'APIキー未設定';
+        apiKeyStatusText.className = 'text-rose-600 font-medium';
+      }
+    }
+
+    // モーダル開閉
+    apiKeyBtn.addEventListener('click', () => {
+      apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
+      apiModal.classList.remove('hidden');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      apiModal.classList.add('hidden');
+    });
+
+    saveKeyBtn.addEventListener('click', () => {
+      const val = apiKeyInput.value.trim();
+      if (val) {
+        localStorage.setItem('gemini_api_key', val);
+      } else {
+        localStorage.removeItem('gemini_api_key');
+      }
+      updateKeyStatus();
+      apiModal.classList.add('hidden');
+    });
+
+    // --- 音声プレビュー ---
+    audioFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        audioPlayer.src = url;
+        audioPreviewContainer.classList.remove('hidden');
+      } else {
+        audioPreviewContainer.classList.add('hidden');
+        audioPlayer.src = '';
+      }
+    });
+
+    // 初期化
+    updateKeyStatus();
+  </script>
+</body>
+</html>
