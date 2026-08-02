@@ -16,7 +16,7 @@
         <span>🎙️</span> 講義ノートAI
       </h1>
       <!-- APIキー設定ボタン -->
-      <button id="apiKeyBtn" type="button" class="text-xs px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 transition cursor-pointer">
+      <button id="apiKeyBtn" class="text-xs px-3 py-1.5 rounded-full border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 transition">
         <span id="apiKeyStatusIcon" class="w-2 h-2 rounded-full bg-slate-400"></span>
         <span id="apiKeyStatusText">APIキー未設定</span>
       </button>
@@ -30,14 +30,14 @@
       <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
         <h2 class="text-base font-bold text-slate-900">Gemini APIキーの設定</h2>
         <p class="text-xs text-slate-500 leading-relaxed">
-          Google AI Studioで取得したAPIキーを入力してください。キーはブラウザ（localStorage）にのみ保存されます。
+          Google AI Studioで取得したAPIキーを入力してください。キーはブラウザ（localStorage）にのみ保存され、GitHub等のリポジトリには公開されません。
         </p>
         <div>
           <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button id="closeModalBtn" type="button" class="text-xs px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">キャンセル</button>
-          <button id="saveKeyBtn" type="button" class="text-xs px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700">保存する</button>
+          <button id="closeModalBtn" class="text-xs px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg">キャンセル</button>
+          <button id="saveKeyBtn" class="text-xs px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700">保存する</button>
         </div>
       </div>
     </div>
@@ -67,22 +67,22 @@
 
     <!-- 実行ボタン & ローディング表示 -->
     <div class="space-y-3">
-      <button id="runBtn" type="button" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-sm font-bold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2 cursor-pointer disabled:bg-slate-300 disabled:cursor-not-allowed">
+      <button id="runBtn" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm hover:shadow transition flex items-center justify-center gap-2 disabled:bg-slate-300 disabled:cursor-not-allowed">
         <span id="runBtnText">✨ 文字起こし＆要約を実行</span>
       </button>
 
       <!-- エラー表示枠 -->
-      <div id="errorAlert" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium"></div>
+      <div id="errorAlert" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700"></div>
     </div>
 
     <!-- 結果表示エリア -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
       <!-- タブ切り替え -->
       <div class="flex border-b border-slate-200 bg-slate-50/50">
-        <button id="tabSummaryBtn" type="button" class="flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition">
+        <button id="tabSummaryBtn" class="flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition">
           📊 要約 & 要点
         </button>
-        <button id="tabTranscriptBtn" type="button" class="flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition">
+        <button id="tabTranscriptBtn" class="flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition">
           📝 全文文字起こし
         </button>
       </div>
@@ -93,9 +93,9 @@
           <div>
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">3行要約</h3>
-              <button id="copySummaryBtn" type="button" class="text-xs text-indigo-600 hover:underline hidden">要約をコピー</button>
+              <button id="copySummaryBtn" class="text-xs text-indigo-600 hover:underline hidden">要約をコピー</button>
             </div>
-            <div id="summaryText" class="text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed whitespace-pre-line">
+            <div id="summaryText" class="text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed">
               音声ファイルを選択して実行してください。
             </div>
           </div>
@@ -110,11 +110,11 @@
           </div>
         </div>
 
-        <!-- タブ2: 全文文字起こし -->
+        <!-- タブ2: 全文文字起こし（初期は隠す） -->
         <div id="transcriptContent" class="hidden space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">全文テキスト</h3>
-            <button id="copyTranscriptBtn" type="button" class="text-xs text-indigo-600 hover:underline hidden">全文をコピー</button>
+            <button id="copyTranscriptBtn" class="text-xs text-indigo-600 hover:underline hidden">全文をコピー</button>
           </div>
           <div id="transcriptText" class="text-xs text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed whitespace-pre-line max-h-96 overflow-y-auto">
             -
@@ -126,142 +126,146 @@
   </main>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // --- DOM要素 ---
-      const apiKeyBtn = document.getElementById('apiKeyBtn');
-      const apiKeyStatusIcon = document.getElementById('apiKeyStatusIcon');
-      const apiKeyStatusText = document.getElementById('apiKeyStatusText');
-      const apiModal = document.getElementById('apiModal');
-      const apiKeyInput = document.getElementById('apiKeyInput');
-      const closeModalBtn = document.getElementById('closeModalBtn');
-      const saveKeyBtn = document.getElementById('saveKeyBtn');
-      const audioFileInput = document.getElementById('audioFileInput');
-      const audioPreviewContainer = document.getElementById('audioPreviewContainer');
-      const audioPlayer = document.getElementById('audioPlayer');
-      const runBtn = document.getElementById('runBtn');
-      const runBtnText = document.getElementById('runBtnText');
-      const errorAlert = document.getElementById('errorAlert');
+    // --- DOM要素 ---
+    const apiKeyBtn = document.getElementById('apiKeyBtn');
+    const apiKeyStatusIcon = document.getElementById('apiKeyStatusIcon');
+    const apiKeyStatusText = document.getElementById('apiKeyStatusText');
+    const apiModal = document.getElementById('apiModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const saveKeyBtn = document.getElementById('saveKeyBtn');
+    const audioFileInput = document.getElementById('audioFileInput');
+    const audioPreviewContainer = document.getElementById('audioPreviewContainer');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const runBtn = document.getElementById('runBtn');
+    const runBtnText = document.getElementById('runBtnText');
+    const errorAlert = document.getElementById('errorAlert');
 
-      const tabSummaryBtn = document.getElementById('tabSummaryBtn');
-      const tabTranscriptBtn = document.getElementById('tabTranscriptBtn');
-      const summaryContent = document.getElementById('summaryContent');
-      const transcriptContent = document.getElementById('transcriptContent');
+    const tabSummaryBtn = document.getElementById('tabSummaryBtn');
+    const tabTranscriptBtn = document.getElementById('tabTranscriptBtn');
+    const summaryContent = document.getElementById('summaryContent');
+    const transcriptContent = document.getElementById('transcriptContent');
 
-      const summaryText = document.getElementById('summaryText');
-      const keyPointsText = document.getElementById('keyPointsText');
-      const transcriptText = document.getElementById('transcriptText');
-      const copySummaryBtn = document.getElementById('copySummaryBtn');
-      const copyTranscriptBtn = document.getElementById('copyTranscriptBtn');
+    const summaryText = document.getElementById('summaryText');
+    const keyPointsText = document.getElementById('keyPointsText');
+    const transcriptText = document.getElementById('transcriptText');
+    const copySummaryBtn = document.getElementById('copySummaryBtn');
+    const copyTranscriptBtn = document.getElementById('copyTranscriptBtn');
 
-      // --- APIキー管理 ---
-      function updateKeyStatus() {
-        const key = localStorage.getItem('gemini_api_key');
-        if (key && key.trim() !== '') {
-          apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
-          apiKeyStatusText.textContent = 'APIキー設定済み';
-          apiKeyStatusText.className = 'text-emerald-700 font-medium';
-        } else {
-          apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-rose-500';
-          apiKeyStatusText.textContent = 'APIキー未設定';
-          apiKeyStatusText.className = 'text-rose-600 font-medium';
-        }
+    // --- APIキー管理 ---
+    function updateKeyStatus() {
+      const key = localStorage.getItem('gemini_api_key');
+      if (key && key.trim() !== '') {
+        apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        apiKeyStatusText.textContent = 'APIキー設定済み';
+        apiKeyStatusText.className = 'text-emerald-700 font-medium';
+      } else {
+        apiKeyStatusIcon.className = 'w-2 h-2 rounded-full bg-rose-500';
+        apiKeyStatusText.textContent = 'APIキー未設定';
+        apiKeyStatusText.className = 'text-rose-600 font-medium';
       }
+    }
 
-      apiKeyBtn.addEventListener('click', () => {
-        apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
-        apiModal.classList.remove('hidden');
-      });
+    apiKeyBtn.addEventListener('click', () => {
+      apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
+      apiModal.classList.remove('hidden');
+    });
 
-      closeModalBtn.addEventListener('click', () => apiModal.classList.add('hidden'));
+    closeModalBtn.addEventListener('click', () => apiModal.classList.add('hidden'));
 
-      saveKeyBtn.addEventListener('click', () => {
-        const val = apiKeyInput.value.trim();
-        if (val) localStorage.setItem('gemini_api_key', val);
-        else localStorage.removeItem('gemini_api_key');
-        updateKeyStatus();
-        apiModal.classList.add('hidden');
-      });
+    saveKeyBtn.addEventListener('click', () => {
+      const val = apiKeyInput.value.trim();
+      if (val) localStorage.setItem('gemini_api_key', val);
+      else localStorage.removeItem('gemini_api_key');
+      updateKeyStatus();
+      apiModal.classList.add('hidden');
+    });
 
-      // --- 音声プレビュー ---
-      audioFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          audioPlayer.src = URL.createObjectURL(file);
-          audioPreviewContainer.classList.remove('hidden');
-        } else {
-          audioPreviewContainer.classList.add('hidden');
-          audioPlayer.src = '';
-        }
-      });
-
-      // --- タブ切り替え ---
-      tabSummaryBtn.addEventListener('click', () => {
-        summaryContent.classList.remove('hidden');
-        transcriptContent.classList.add('hidden');
-        tabSummaryBtn.className = 'flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition';
-        tabTranscriptBtn.className = 'flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition';
-      });
-
-      tabTranscriptBtn.addEventListener('click', () => {
-        transcriptContent.classList.remove('hidden');
-        summaryContent.classList.add('hidden');
-        tabTranscriptBtn.className = 'flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition';
-        tabSummaryBtn.className = 'flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition';
-      });
-
-      // --- 音声ファイルをBase64に変換 ---
-      function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = (error) => reject(error);
-          reader.readAsDataURL(file);
-        });
+    // --- 音声プレビュー ---
+    audioFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        audioPlayer.src = URL.createObjectURL(file);
+        audioPreviewContainer.classList.remove('hidden');
+      } else {
+        audioPreviewContainer.classList.add('hidden');
+        audioPlayer.src = '';
       }
+    });
 
-      // --- コピー機能 ---
-      function setupCopyBtn(btn, getTextFn) {
-        btn.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(getTextFn());
-            const origText = btn.textContent;
-            btn.textContent = 'コピーしました！';
-            setTimeout(() => btn.textContent = origText, 2000);
-          } catch (err) {
-            alert('コピーに失敗しました');
-          }
-        });
-      }
-      setupCopyBtn(copySummaryBtn, () => `【3行要約】\n${summaryText.textContent}\n\n【主要ポイント】\n${keyPointsText.textContent}`);
-      setupCopyBtn(copyTranscriptBtn, () => transcriptText.textContent);
+    // --- タブ切り替え ---
+    tabSummaryBtn.addEventListener('click', () => {
+      summaryContent.classList.remove('hidden');
+      transcriptContent.classList.add('hidden');
+      tabSummaryBtn.className = 'flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition';
+      tabTranscriptBtn.className = 'flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition';
+    });
 
-      // --- API実行メインロジック ---
-      runBtn.addEventListener('click', async () => {
-        errorAlert.classList.add('hidden');
-        
-        const apiKey = localStorage.getItem('gemini_api_key');
-        if (!apiKey) {
-          alert('先にAPIキーを設定してください（右上のボタンから入力できます）。');
-          apiModal.classList.remove('hidden');
-          return;
-        }
+    tabTranscriptBtn.addEventListener('click', () => {
+      transcriptContent.classList.remove('hidden');
+      summaryContent.classList.add('hidden');
+      tabTranscriptBtn.className = 'flex-1 py-3 text-xs font-bold text-indigo-600 border-b-2 border-indigo-600 transition';
+      tabSummaryBtn.className = 'flex-1 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition';
+    });
 
-        const file = audioFileInput.files[0];
-        if (!file) {
-          alert('音声ファイルを選択してください。');
-          return;
-        }
+    // --- 音声ファイルをBase64に変換する関数 ---
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // "data:audio/mp3;base64,AAAA..." から 純粋なBase64文字列だけを取り出す
+          const base64String = reader.result.split(',')[1];
+          resolve(base64String);
+        };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
 
-        // 処理中表示への変更
-        runBtn.disabled = true;
-        runBtnText.textContent = '⏳ 音声を解析中...（数十秒かかります）';
-
+    // --- コピー機能 ---
+    function setupCopyBtn(btn, getTextFn) {
+      btn.addEventListener('click', async () => {
         try {
-          const base64Data = await fileToBase64(file);
-          let mimeType = file.type || 'audio/mp3';
-          if (mimeType.includes('m4a') || mimeType.includes('mp4')) mimeType = 'audio/m4a';
+          await navigator.clipboard.writeText(getTextFn());
+          const origText = btn.textContent;
+          btn.textContent = 'コピーしました！';
+          setTimeout(() => btn.textContent = origText, 2000);
+        } catch (err) {
+          alert('コピーに失敗しました');
+        }
+      });
+    }
+    setupCopyBtn(copySummaryBtn, () => `【3行要約】\n${summaryText.textContent}\n\n【主要ポイント】\n${keyPointsText.textContent}`);
+    setupCopyBtn(copyTranscriptBtn, () => transcriptText.textContent);
 
-          const prompt = `以下の音声を聞き、指示に従って出力してください。
+    // --- API実行メインロジック ---
+    runBtn.addEventListener('click', async () => {
+      errorAlert.classList.add('hidden');
+      
+      const apiKey = localStorage.getItem('gemini_api_key');
+      if (!apiKey) {
+        alert('先にAPIキーを設定してください（右上のボタンから入力できます）。');
+        apiModal.classList.remove('hidden');
+        return;
+      }
+
+      const file = audioFileInput.files[0];
+      if (!file) {
+        alert('音声ファイルを選択してください。');
+        return;
+      }
+
+      // 処理中のUI変更
+      runBtn.disabled = true;
+      runBtnText.textContent = '⏳ 音声を解析中...（数十秒かかります）';
+
+      try {
+        // 1. ファイルをBase64化
+        const base64Data = await fileToBase64(file);
+        const mimeType = file.type || 'audio/mp3';
+
+        // 2. プロンプト設定
+        const prompt = `以下の音声を聞き、指示に従って出力してください。
 
 【指示】
 1. 講義の内容を全文章で正確に文字起こししてください。
@@ -280,75 +284,64 @@
 ---全文文字起こし---
 (ここに文字起こしテキスト)`;
 
-          // エンドポイント (gemini-2.5-flash)
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-          
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [
-                  {
-                    inlineData: {
-                      mimeType: mimeType,
-                      data: base64Data
-                    }
-                  },
-                  { text: prompt }
-                ]
-              }]
-            })
-          });
+        // 3. Gemini APIへ送信
+        const endpoint =
+  `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`;
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{
+              parts: [
+                {
+                  inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
+                  }
+                },
+                { text: prompt }
+              ]
+            }]
+          })
+        });
 
-          const data = await response.json();
+        const data = await response.json();
 
-          if (!response.ok) {
-            throw new Error(data.error?.message || `APIエラー (Status: ${response.status})`);
-          }
-
-          const fullText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!fullText) throw new Error('APIからの返答が空でした。');
-
-          // テキストパース
-          let partsSummary = "";
-          let partsPoints = "";
-          let partsTranscript = "";
-
-          if (fullText.includes('---3行要約---')) {
-            const split1 = fullText.split('---3行要約---')[1] || "";
-            const split2 = split1.split('---主要ポイント---');
-            partsSummary = split2[0] || "";
-
-            if (split2[1]) {
-              const split3 = split2[1].split('---全文文字起こし---');
-              partsPoints = split3[0] || "";
-              partsTranscript = split3[1] || "";
-            }
-          } else {
-            partsSummary = fullText;
-          }
-
-          summaryText.textContent = partsSummary.trim() || '要約の生成が完了しました。';
-          keyPointsText.textContent = partsPoints.trim() || '-';
-          transcriptText.textContent = (partsTranscript || fullText).trim();
-
-          copySummaryBtn.classList.remove('hidden');
-          copyTranscriptBtn.classList.remove('hidden');
-
-        } catch (err) {
-          console.error(err);
-          errorAlert.textContent = `エラーが発生しました: ${err.message}`;
-          errorAlert.classList.remove('hidden');
-        } finally {
-          runBtn.disabled = false;
-          runBtnText.textContent = '✨ 文字起こし＆要約を実行';
+        if (!response.ok) {
+          throw new Error(data.error?.message || `APIエラー (Status: ${response.status})`);
         }
-      });
 
-      // 初期状態の反映
-      updateKeyStatus();
+        // 4. 返答テキストの取得とパース
+        const fullText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!fullText) throw new Error('APIからの返答が空でした。');
+
+        // セパレーターで分割
+        const partsSummary = fullText.split('---3行要約---')[1]?.split('---主要ポイント---') || [];
+        const partsPoints = fullText.split('---主要ポイント---')[1]?.split('---全文文字起こし---') || [];
+        const partsTranscript = fullText.split('---全文文字起こし---')[1] || fullText;
+
+        // 画面に描画
+        summaryText.textContent = (partsSummary[0] || '取得失敗').trim();
+        keyPointsText.textContent = (partsPoints[0] || '取得失敗').trim();
+        transcriptText.textContent = partsTranscript.trim();
+
+        // コピーボタン表示
+        copySummaryBtn.classList.remove('hidden');
+        copyTranscriptBtn.classList.remove('hidden');
+
+      } catch (err) {
+        console.error(err);
+        errorAlert.textContent = `エラーが発生しました: ${err.message}`;
+        errorAlert.classList.remove('hidden');
+      } finally {
+        runBtn.disabled = false;
+        runBtnText.textContent = '✨ 文字起こし＆要約を実行';
+      }
     });
+
+    // 初期化
+    updateKeyStatus();
   </script>
 </body>
 </html>
